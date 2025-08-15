@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useGuessList } from '@/composables'
 import { OrderState, orderStateList } from '@/services/constants'
-import { getMemberOrderByIdAPI, getMemberOrderConsignmentByIdAPI } from '@/services/order'
+import {
+  getMemberOrderByIdAPI,
+  getMemberOrderConsignmentByIdAPI,
+  putMemberOrderReceiptByIdAPI,
+} from '@/services/order'
 import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
 import type { OrderResult } from '@/types/order'
 import { onLoad, onReady } from '@dcloudio/uni-app'
@@ -116,6 +120,22 @@ const onOrderSend = async () => {
     order.value!.orderState = OrderState.DaiShouHuo
   }
 }
+
+//确认收货
+const onOrderConfirm = () => {
+  uni.showModal({
+    content: '确认收货吗？',
+    showCancel: true,
+    success: async (success) => {
+      if (success.confirm) {
+        //模拟确认收货成功
+        const res = await putMemberOrderReceiptByIdAPI(query.id)
+        //主动更新订单状态
+        order.value = res.result
+      }
+    },
+  })
+}
 </script>
 
 <template>
@@ -173,6 +193,13 @@ const onOrderSend = async () => {
             >
               模拟发货
             </view>
+            <!-- 待收货状态，展示确认收货按钮 -->
+            <view
+              v-if="order.orderState === OrderState.DaiShouHuo"
+              class="button"
+              @tap="onOrderConfirm"
+              >确认收货</view
+            >
           </view>
         </template>
       </view>
