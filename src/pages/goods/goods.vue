@@ -127,7 +127,7 @@ const onBuyNow = (ev: SkuPopupEvent) => {
 const addressList = ref<AddressItem[]>([])
 const getAddress = async () => {
   const res = await getMemberAddressAPI()
-  addressList.value = res.result
+  addressList.value = res.result!
 }
 //接收子组件的收件地址
 const addressItem = ref<AddressItem>()
