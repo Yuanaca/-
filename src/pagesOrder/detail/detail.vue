@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useGuessList } from '@/composables'
-import { onReady } from '@dcloudio/uni-app'
+import { OrderState, orderStateList } from '@/services/constants'
+import { getMemberOrderByIdAPI } from '@/services/order'
+import type { OrderResult } from '@/types/order'
+import { onLoad, onReady } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
 // 获取屏幕边界到安全区域距离
@@ -65,6 +68,22 @@ onReady(() => {
     endScrollOffset: 50,
   })
 })
+//获取订单详情
+const order = ref<OrderResult>()
+const getMemberOrderByIdData = async () => {
+  const res = await getMemberOrderByIdAPI(query.id)
+  order.value = res.result
+}
+
+onLoad(() => {
+  getMemberOrderByIdData()
+})
+
+//倒计时结束时间
+const onTimeup = () => {
+  // 修改订单状态为已取消
+  order.value!.orderState = OrderState.YiQuXiao
+}
 </script>
 
 <template>
@@ -82,23 +101,30 @@ onReady(() => {
     </view>
   </view>
   <scroll-view scroll-y class="viewport" id="scroller" @scrolltolower="onScrolltolower">
-    <template v-if="true">
+    <template v-if="order">
       <!-- 订单状态 -->
       <view class="overview" :style="{ paddingTop: safeAreaInsets!.top + 20 + 'px' }">
         <!-- 待付款状态:展示去支付按钮和倒计时 -->
-        <template v-if="true">
+        <template v-if="order?.orderState === OrderState.DaiFuKuan">
           <view class="status icon-clock">等待付款</view>
           <view class="tips">
-            <text class="money">应付金额: ¥ 99.00</text>
+            <text class="money">应付金额: ¥ {{ order?.payMoney }}</text>
             <text class="time">支付剩余</text>
-            00 时 29 分 59 秒
+            <uni-countdown
+              :second="order.countdown"
+              color="#fff"
+              :show-day="false"
+              :show-colon="false"
+              splitor-color="#fff"
+              @timeup="onTimeup"
+            />
           </view>
           <view class="button">去支付</view>
         </template>
         <!-- 其他订单状态:展示再次购买按钮 -->
         <template v-else>
           <!-- 订单状态文字 -->
-          <view class="status"> 待付款 </view>
+          <view class="status"> {{ orderStateList[order.orderState].text }}</view>
           <view class="button-group">
             <navigator
               class="button"
