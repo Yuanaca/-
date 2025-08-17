@@ -11,7 +11,7 @@
   "explorer.compactFolders": false,
   // 配置 vue 文件的默认格式化工具为 prettier
   "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "Vue.volar"
   },
   // 配置 html 文件的默认格式化工具为 prettier
   "[html]": {

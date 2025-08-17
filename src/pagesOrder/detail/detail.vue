@@ -158,7 +158,7 @@ const onOrderDelete = () => {
     showCancel: true,
     success: async (success) => {
       if (success.confirm) {
-        //模拟删除订单成功
+        //删除订单成功
         await deleteMemberOrderAPI({ ids: [query.id] })
         uni.redirectTo({
           url: '/pagesOrder/list/list',
