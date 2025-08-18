@@ -42,7 +42,8 @@ const { guessRef, onScrolltolower } = useGuessList()
             class="avatar gray"
             mode="aspectFill"
             src="http://yjy-xiaotuxian-dev.oss-cn-beijing.aliyuncs.com/picture/2021-04-06/db628d42-88a7-46e7-abb8-659448c33081.png"
-          ></image>
+          >
+          </image>
         </navigator>
         <view class="meta">
           <navigator url="/pages/login/login" hover-class="none" class="nickname">
@@ -78,7 +79,9 @@ const { guessRef, onScrolltolower } = useGuessList()
           {{ item.text }}
         </navigator>
         <!-- 客服 -->
+        <!-- #ifdef MP-WEIXIN -->
         <button class="contact icon-handset" open-type="contact">售后</button>
+        <!-- #endif -->
       </view>
     </view>
     <!-- 猜你喜欢 -->
@@ -199,17 +202,20 @@ page {
     display: flex;
     justify-content: space-between;
     padding: 40rpx 20rpx 10rpx;
+
     .navigator,
     .contact {
       text-align: center;
       font-size: 24rpx;
       color: #333;
+
       &::before {
         display: block;
         font-size: 60rpx;
         color: #ff9545;
       }
     }
+
     .contact {
       padding: 0;
       margin: 0;

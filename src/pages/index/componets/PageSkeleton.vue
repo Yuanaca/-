@@ -159,9 +159,16 @@
 </template>
 
 <style>
+/* #ifdef APP-PLUS || H5 */
+@import '@/components/styles/XtxSwiper.scss';
+@import './styles/CategoryPanel.scss';
+@import './styles/HotPanel.scss';
+
+/* #endif */
 .sk-transparent {
   color: transparent !important;
 }
+
 .sk-text-3-5714-72 {
   background-image: linear-gradient(
     transparent 3.5714%,
@@ -172,6 +179,7 @@
   background-size: 100% 28rpx;
   position: relative !important;
 }
+
 .sk-text {
   background-origin: content-box !important;
   background-clip: content-box !important;
@@ -179,6 +187,7 @@
   color: transparent !important;
   background-repeat: repeat-y !important;
 }
+
 .sk-text-14-2857-726 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -189,6 +198,7 @@
   background-size: 100% 39.2rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-251 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -199,6 +209,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-378 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -209,6 +220,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-110 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -219,6 +231,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-442 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -229,6 +242,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-944 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -239,6 +253,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-687 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -249,6 +264,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-104 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -259,6 +275,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-501 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -269,6 +286,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-563 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -279,6 +297,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-463 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -289,6 +308,7 @@
   background-size: 100% 36.4rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-760 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -299,6 +319,7 @@
   background-size: 100% 44.8rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-244 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -309,6 +330,7 @@
   background-size: 100% 33.6rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-466 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -319,6 +341,7 @@
   background-size: 100% 44.8rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-995 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -329,6 +352,7 @@
   background-size: 100% 33.6rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-665 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -339,6 +363,7 @@
   background-size: 100% 44.8rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-336 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -349,6 +374,7 @@
   background-size: 100% 33.6rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-963 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -359,6 +385,7 @@
   background-size: 100% 44.8rpx;
   position: relative !important;
 }
+
 .sk-text-14-2857-987 {
   background-image: linear-gradient(
     transparent 14.2857%,
@@ -369,6 +396,7 @@
   background-size: 100% 33.6rpx;
   position: relative !important;
 }
+
 .sk-text-0-0000-489 {
   background-image: linear-gradient(
     transparent 0%,
@@ -379,9 +407,11 @@
   background-size: 100% 32rpx;
   position: relative !important;
 }
+
 .sk-image {
   background: #efefef !important;
 }
+
 .sk-pseudo::before,
 .sk-pseudo::after {
   background: #efefef !important;
@@ -389,14 +419,17 @@
   color: transparent !important;
   border-color: transparent !important;
 }
+
 .sk-pseudo-rect::before,
 .sk-pseudo-rect::after {
   border-radius: 0 !important;
 }
+
 .sk-pseudo-circle::before,
 .sk-pseudo-circle::after {
   border-radius: 50% !important;
 }
+
 .sk-container {
   position: absolute;
   left: 0;
