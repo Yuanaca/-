@@ -8,7 +8,7 @@ import {
   getMemberOrderLogisticsByIdAPI,
   putMemberOrderReceiptByIdAPI,
 } from '@/services/order'
-import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
+import { getPayWxPayMiniPayAPI, postPayMockCreateAPI } from '@/services/pay'
 import type { LogisticItem, OrderResult } from '@/types/order'
 import { onLoad, onReady } from '@dcloudio/uni-app'
 import { ref } from 'vue'
@@ -81,11 +81,16 @@ const getMemberOrderByIdData = async () => {
   const res = await getMemberOrderByIdAPI(query.id)
   order.value = res.result
   if (
-    [OrderState.DaiFuKuan, OrderState.DaiShouHuo, OrderState.YiWanCheng].includes(
-      order.value.orderState,
-    )
+    [
+      OrderState.DaiFaHuo,
+      OrderState.DaiShouHuo,
+      OrderState.DaiPingJia,
+      OrderState.YiWanCheng,
+    ].includes(order.value.orderState)
   ) {
     getMemberOrderLogisticsByIdData()
+  } else {
+    logisticList.value = []
   }
 }
 //获取物流信息
@@ -105,21 +110,27 @@ const onTimeup = () => {
 }
 //订单支付
 const onOrderPay = async () => {
-  if (import.meta.env.DEV) {
-    //开发环境模拟支付
-    await getPayMockAPI({ orderId: query.id })
-  } else {
-    //正式环境微信支付
-    // #ifdef MP-WEIXIN
-    const res = await getPayWxPayMiniPayAPI({ orderId: query.id })
-    wx.requestPayment(res.result)
-    //关闭当前页面，再跳转支付结果页面
-    // #endif
-  }
+  try {
+    if (import.meta.env.DEV) {
+      // 开发环境：创建模拟支付单，进入支付页确认支付
+      await postPayMockCreateAPI({ orderId: query.id })
+    } else {
+      // 正式环境微信支付
+      // #ifdef MP-WEIXIN
+      const res = await getPayWxPayMiniPayAPI({ orderId: query.id })
+      wx.requestPayment(res.result)
+      // #endif
+    }
 
-  uni.redirectTo({
-    url: `/pagesOrder/payment/payment?id=${query.id}`,
-  })
+    uni.redirectTo({
+      url: `/pagesOrder/payment/payment?id=${query.id}`,
+    })
+  } catch (error) {
+    uni.showToast({
+      icon: 'none',
+      title: '拉起支付失败，请重试',
+    })
+  }
 }
 
 //是否为开发环境
@@ -238,8 +249,12 @@ const onOrderDelete = () => {
       </view>
       <!-- 配送状态 -->
       <view class="shipment">
+        <view class="item" v-if="order.orderState === OrderState.DaiFuKuan">
+          <view class="message">订单待支付，支付成功后将开始制作并配送</view>
+          <view class="date">{{ order.createTime }}</view>
+        </view>
         <!-- 订单物流信息 -->
-        <view v-for="item in logisticList" :key="item.id" class="item">
+        <view v-else v-for="item in logisticList" :key="item.id" class="item">
           <view class="message">
             {{ item.text }}
           </view>
@@ -249,6 +264,13 @@ const onOrderDelete = () => {
         <view class="locate">
           <view class="user"> {{ order.receiverContact }} {{ order.receiverMobile }}</view>
           <view class="address"> {{ order.receiverAddress }} </view>
+        </view>
+        <view class="proof" v-if="order.deliveryImage">
+          <view class="proof-title">送达凭证</view>
+          <image class="proof-image" :src="order.deliveryImage" mode="aspectFill" />
+          <view class="proof-text"
+            >骑手：{{ order.riderName || '配送骑手' }} · 配送费 ¥{{ order.deliveryFee || 0 }}</view
+          >
         </view>
       </view>
 
@@ -512,6 +534,31 @@ page {
     }
 
     .date {
+      font-size: 24rpx;
+      color: #666;
+    }
+  }
+
+  .proof {
+    margin-top: 20rpx;
+    padding-top: 16rpx;
+    border-top: 1rpx solid #efefef;
+
+    .proof-title {
+      font-size: 26rpx;
+      color: #333;
+      margin-bottom: 10rpx;
+    }
+
+    .proof-image {
+      width: 220rpx;
+      height: 220rpx;
+      border-radius: 10rpx;
+      background-color: #f2f2f2;
+    }
+
+    .proof-text {
+      margin-top: 8rpx;
       font-size: 24rpx;
       color: #666;
     }

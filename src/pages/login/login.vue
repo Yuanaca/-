@@ -83,7 +83,7 @@ const loginSuccess = (profile: LoginResult) => {
           </button>
         </view>
       </view>
-      <view class="tips">登录/注册即视为你同意《服务条款》和《小兔鲜儿隐私协议》</view>
+      <view class="tips">登录/注册即视为你同意《服务条款》和《蜜雪点单隐私协议》</view>
     </view>
   </view>
 </template>

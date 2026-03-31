@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import CustomNavbar from './componets/CustomNavbar.vue'
 import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotAPI } from '@/services/home'
+import { getHomeSeckillAPI } from '@/services/seckill'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
+import type { SeckillItem } from '@/types/seckill'
 import CategoryPanel from './componets/CategoryPanel.vue'
 import HotPanel from './componets/HotPanel.vue'
+import SeckillPanel from './componets/SeckillPanel.vue'
 import PageSkeleton from './componets/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
 
@@ -29,12 +32,24 @@ const getHomeHotData = async () => {
   const res = await getHomeHotAPI()
   hotList.value = res.result
 }
+
+// 获取首页秒杀数据
+const seckillList = ref<SeckillItem[]>([])
+const getHomeSeckillData = async () => {
+  const res = await getHomeSeckillAPI(3)
+  seckillList.value = res.result.list
+}
 //是否加载中标记
 const isLoading = ref(false)
 //页面加载
 onLoad(async () => {
   isLoading.value = true
-  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  await Promise.all([
+    getHomeBannerData(),
+    getHomeCategoryData(),
+    getHomeSeckillData(),
+    getHomeHotData(),
+  ])
 
   isLoading.value = false
 })
@@ -54,6 +69,7 @@ const onRefresherrefresh = async () => {
   await Promise.all([
     getHomeBannerData(),
     getHomeCategoryData(),
+    getHomeSeckillData(),
     getHomeHotData(),
     guessRef.value?.getMore(),
   ])
@@ -78,11 +94,12 @@ const onRefresherrefresh = async () => {
       <XtxSwiper :list="bannerList" />
       <!-- 分类面板 -->
       <CategoryPanel :list="categoryList" />
+      <!-- 秒杀专区 -->
+      <SeckillPanel :list="seckillList" />
       <!-- 热门推荐 -->
       <HotPanel :list="hotList" />
       <!-- 猜你喜欢 -->
       <XtxGuess ref="guessRef" />
-      <view>index</view>
     </template>
   </scroll-view>
 </template>

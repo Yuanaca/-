@@ -15,6 +15,16 @@ const pageParams: Required<PageParams> = {
 const guessList = ref<GuessItem[]>([])
 //已结束标记
 const finish = ref(false)
+const DEFAULT_IMAGE = '/static/images/blank.png'
+
+const getGuessImage = (item: GuessItem) => {
+  return item.picture || DEFAULT_IMAGE
+}
+
+const onGuessImageError = (item: GuessItem) => {
+  item.picture = DEFAULT_IMAGE
+}
+
 //获取猜你喜欢数据
 const getHomeGoodsGuessLikeData = async () => {
   //退出判断
@@ -58,7 +68,7 @@ defineExpose({
 <template>
   <!-- 猜你喜欢 -->
   <view class="caption">
-    <text class="text">猜你喜欢</text>
+    <text class="text">热门加购</text>
   </view>
   <view class="guess">
     <navigator
@@ -67,7 +77,12 @@ defineExpose({
       :key="item.id"
       :url="`/pages/goods/goods?id=${item.id}`"
     >
-      <image class="image" mode="aspectFill" :src="item.picture"></image>
+      <image
+        class="image"
+        mode="aspectFill"
+        :src="getGuessImage(item)"
+        @error="onGuessImageError(item)"
+      ></image>
       <view class="name"> {{ item.name }} </view>
       <view class="price">
         <text class="small">¥</text>

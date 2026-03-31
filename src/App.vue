@@ -21,6 +21,7 @@ navigator,
 input,
 scroll-view {
   box-sizing: border-box;
+  font-family: 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
 button::after {
@@ -47,5 +48,9 @@ image {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+page {
+  background: linear-gradient(180deg, #fff8f2 0%, #f6efe8 100%);
 }
 </style>

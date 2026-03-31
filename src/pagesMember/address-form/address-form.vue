@@ -128,7 +128,7 @@ const onSubmit = async () => {
           mode="region"
           :value="form.fullLocation.split(' ')"
         >
-          <view v-if="form.fullLocation">广东省 广州市 天河区</view>
+          <view v-if="form.fullLocation">{{ form.fullLocation }}</view>
           <view v-else class="placeholder">请选择省/市/区(县)</view>
         </picker>
       </uni-forms-item>

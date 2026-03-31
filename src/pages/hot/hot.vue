@@ -25,6 +25,23 @@ uni.setNavigationBarTitle({
 })
 //推荐封面图
 const bannerPicture = ref('')
+const DEFAULT_IMAGE = '/static/images/blank.png'
+
+const getBannerImage = () => {
+  return bannerPicture.value || DEFAULT_IMAGE
+}
+
+const onBannerImageError = () => {
+  bannerPicture.value = DEFAULT_IMAGE
+}
+
+const getGoodsImage = (goods: { picture?: string }) => {
+  return goods.picture || DEFAULT_IMAGE
+}
+
+const onGoodsImageError = (goods: { picture?: string }) => {
+  goods.picture = DEFAULT_IMAGE
+}
 // 推荐选项
 const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([])
 // 高亮的下标
@@ -37,7 +54,7 @@ const getHotRecommendData = async () => {
     page: import.meta.env.Dev ? 30 : 1,
     pageSize: 10,
   })
-  bannerPicture.value = res.result.bannerPicture
+  bannerPicture.value = res.result.bannerPicture || DEFAULT_IMAGE
   subTypes.value = res.result.subTypes
 }
 //
@@ -80,7 +97,7 @@ const onScrolltolower = async () => {
   <view class="viewport">
     <!-- 推荐封面图 -->
     <view class="cover">
-      <image :src="bannerPicture"></image>
+      <image :src="getBannerImage()" @error="onBannerImageError"></image>
     </view>
     <!-- 推荐选项 -->
     <view class="tabs">
@@ -111,7 +128,11 @@ const onScrolltolower = async () => {
           :key="goods.id"
           :url="`/pages/goods/goods?id=${goods.id}`"
         >
-          <image class="thumb" :src="goods.picture"></image>
+          <image
+            class="thumb"
+            :src="getGoodsImage(goods)"
+            @error="onGoodsImageError(goods)"
+          ></image>
           <view class="name ellipsis">{{ goods.name }}</view>
           <view class="price">
             <text class="symbol">¥</text>

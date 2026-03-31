@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { OrderState, orderStateList } from '@/services/constants'
 import { getMemberOrderAPI } from '@/services/order'
-import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
+import { getPayWxPayMiniPayAPI, postPayMockCreateAPI } from '@/services/pay'
 import type { OrderItem, OrderListParams } from '@/types/order'
 import { onMounted, ref } from 'vue'
 
@@ -33,19 +33,19 @@ onMounted(() => {
 //订单支付
 const onOrderPay = async (id: string) => {
   if (import.meta.env.DEV) {
-    //开发环境模拟支付
-    await getPayMockAPI({ orderId: id })
+    // 开发环境：创建模拟支付单并跳转支付确认页
+    await postPayMockCreateAPI({ orderId: id })
+    uni.navigateTo({
+      url: `/pagesOrder/payment/payment?id=${id}`,
+    })
   } else {
     //正式环境微信支付
     const res = await getPayWxPayMiniPayAPI({ orderId: id })
     wx.requestPayment(res.result)
+    uni.navigateTo({
+      url: `/pagesOrder/payment/payment?id=${id}`,
+    })
   }
-  uni.showToast({
-    title: '支付成功',
-    icon: 'success',
-  })
-  const order = orderList.value.find((v) => v.id === id)
-  order!.orderState = OrderState.DaiFaHuo
 }
 </script>
 

@@ -10,17 +10,24 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 
 // 获取个人信息
 const profile = ref<ProfileDetail>({} as ProfileDetail)
+let fullLocationParts: [string, string, string] = ['', '', '']
 const getMemberProfileData = async () => {
   const res = await getMemberProfileAPI()
   profile.value = res.result
+  const parts = (profile.value.fullLocation || '').split(' ').filter(Boolean)
+  if (parts.length === 3) {
+    fullLocationParts = [parts[0], parts[1], parts[2]]
+  }
 }
 onLoad(() => {
   getMemberProfileData()
 })
 
 const memberStore = useMemberStore()
+
 //修改头像
 const onAvatarChange = () => {
+  // #ifdef MP-WEIXIN
   //调用拍照/选择图片
   uni.chooseMedia({
     count: 1,
@@ -29,45 +36,65 @@ const onAvatarChange = () => {
       //本地路径
       const { tempFilePath } = res.tempFiles[0]
       //文件上传
-      uni.uploadFile({
-        url: '/member/profile/avatar',
-        name: 'file',
-        filePath: tempFilePath,
-        success: (res) => {
-          if (res.statusCode === 200) {
-            const avatar = JSON.parse(res.data).result.avatar
-            //个人头像更新
-            profile.value!.avatar = avatar
-            //store头像更新
-            memberStore.profile!.avatar = avatar
-            uni.showToast({
-              title: '更新成功',
-              icon: 'success',
-            })
-          } else {
-            uni.showToast({
-              title: '更新失败',
-              icon: 'error',
-            })
-          }
-        },
-      })
+      upLoadFile(tempFilePath)
+    },
+  })
+  // #endif
+  // #ifdef H5 || APP-PLUS
+  uni.chooseImage({
+    count: 1,
+    success: (res) => {
+      const tempFilePath = res.tempFilePaths[0]
+      //图片上传
+      upLoadFile(tempFilePath)
+    },
+  })
+  // #endif
+}
+
+//文件上传 封装
+const upLoadFile = (tempFilePath: string) => {
+  uni.uploadFile({
+    url: '/member/profile/avatar',
+    name: 'file',
+    filePath: tempFilePath,
+    success: (res) => {
+      if (res.statusCode === 200) {
+        const avatar = JSON.parse(res.data).result.avatar
+        //个人头像更新
+        profile.value!.avatar = avatar
+        //store头像更新
+        memberStore.profile!.avatar = avatar
+        uni.showToast({
+          title: '更新成功',
+          icon: 'success',
+        })
+      } else {
+        uni.showToast({
+          title: '更新失败',
+          icon: 'error',
+        })
+      }
     },
   })
 }
-
 //点击保存提交表单
 const onSubmit = async () => {
   const { nickname, gender, birthday, profession } = profile.value
-  const res = await putMemberProfileAPI({
+  const payload: any = {
     nickname,
     gender,
     birthday,
     profession,
-    provinceCode: fullLocationCode[0],
-    cityCode: fullLocationCode[1],
-    countyCode: fullLocationCode[2],
-  })
+  }
+  if (fullLocationParts.some((v) => !!v)) {
+    // 这里兼容后端字段名，保存中文地区名，便于下次 picker 正确回显。
+    payload.provinceCode = fullLocationParts[0]
+    payload.cityCode = fullLocationParts[1]
+    payload.countyCode = fullLocationParts[2]
+  }
+
+  const res = await putMemberProfileAPI(payload)
   //更新store昵称
   memberStore.profile!.nickname = res.result?.nickname
 
@@ -89,11 +116,10 @@ const onBirthdayChange: UniHelper.DatePickerOnChange = (ev) => {
   profile.value.birthday = ev.detail.value
 }
 //修改地区
-let fullLocationCode: [string, string, string] = ['', '', '']
 const onFullLocationChange: UniHelper.RegionPickerOnChange = (ev) => {
   //修改前端界面
   profile.value.fullLocation = ev.detail.value.join(' ')
-  fullLocationCode = ev.detail.code!
+  fullLocationParts = [ev.detail.value[0], ev.detail.value[1], ev.detail.value[2]]
 }
 </script>
 
@@ -286,6 +312,7 @@ page {
     .picker {
       flex: 1;
     }
+
     .placeholder {
       color: #808080;
     }

@@ -13,6 +13,15 @@ import { computed, ref } from 'vue'
 
 //获取会员store
 const memberStore = useMemberStore()
+const DEFAULT_IMAGE = '/static/images/blank.png'
+
+const getCartImage = (item: CartItem) => {
+  return item.picture || DEFAULT_IMAGE
+}
+
+const onCartImageError = (item: CartItem) => {
+  item.picture = DEFAULT_IMAGE
+}
 
 //获取购物车数据
 const cartList = ref<CartItem[]>([])
@@ -128,7 +137,12 @@ const gotoPayment = () => {
                 hover-class="none"
                 class="navigator"
               >
-                <image mode="aspectFill" class="picture" :src="item.picture"></image>
+                <image
+                  mode="aspectFill"
+                  class="picture"
+                  :src="getCartImage(item)"
+                  @error="onCartImageError(item)"
+                ></image>
                 <view class="meta">
                   <view class="name ellipsis">{{ item.name }}</view>
                   <view class="attrsText ellipsis">{{ item.attrsText }}</view>

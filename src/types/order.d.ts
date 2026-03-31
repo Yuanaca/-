@@ -93,6 +93,12 @@ export type OrderResult = {
   postFee: number
   /** 应付金额 */
   payMoney: number
+  /** 骑手姓名 */
+  riderName?: string
+  /** 送达图片 */
+  deliveryImage?: string
+  /** 配送费 */
+  deliveryFee?: number
 }
 
 /** 商品信息 */

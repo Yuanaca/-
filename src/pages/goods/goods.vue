@@ -13,6 +13,7 @@ import type { AddressItem } from '@/types/address'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
+const DEFAULT_IMAGE = '/static/images/blank.png'
 
 //接受页面参数
 const query = defineProps<{
@@ -23,6 +24,15 @@ const goods = ref<GoodsResult>()
 const getGoodsByIdData = async () => {
   const res = await getGoodsByIdAPI(query.id)
   goods.value = res.result
+  if (!goods.value.mainPictures?.length) {
+    goods.value.mainPictures = [DEFAULT_IMAGE]
+  }
+  goods.value.mainPictures = goods.value.mainPictures.map((v) => v || DEFAULT_IMAGE)
+  goods.value.details.pictures = goods.value.details.pictures.map((v) => v || DEFAULT_IMAGE)
+  goods.value.similarProducts = goods.value.similarProducts.map((v) => ({
+    ...v,
+    picture: v.picture || DEFAULT_IMAGE,
+  }))
   //SKU组件所需格式
   localdata.value = {
     _id: res.result.id,
@@ -46,6 +56,24 @@ const getGoodsByIdData = async () => {
       }
     }),
   }
+}
+
+const onMainImageError = (index: number) => {
+  if (!goods.value?.mainPictures) return
+  goods.value.mainPictures[index] = DEFAULT_IMAGE
+}
+
+const onDetailImageError = (index: number) => {
+  if (!goods.value?.details?.pictures) return
+  goods.value.details.pictures[index] = DEFAULT_IMAGE
+}
+
+const getSimilarImage = (item: { picture?: string }) => {
+  return item.picture || DEFAULT_IMAGE
+}
+
+const onSimilarImageError = (item: { picture?: string }) => {
+  item.picture = DEFAULT_IMAGE
 }
 //页面加载
 onLoad(() => {
@@ -166,8 +194,13 @@ const handleSelectAddress = (address: AddressItem) => {
       <!-- 商品主图 -->
       <view class="preview">
         <swiper circular @change="onChange">
-          <swiper-item v-for="item in goods?.mainPictures" :key="item">
-            <image @tap="onTapImage(item)" mode="aspectFill" :src="item" />
+          <swiper-item v-for="(item, index) in goods?.mainPictures" :key="item">
+            <image
+              @tap="onTapImage(item)"
+              mode="aspectFill"
+              :src="item"
+              @error="onMainImageError(index)"
+            />
           </swiper-item>
         </swiper>
         <view class="indicator">
@@ -223,10 +256,11 @@ const handleSelectAddress = (address: AddressItem) => {
         </view>
         <!-- 图片详情 -->
         <image
-          v-for="item in goods?.details.pictures"
+          v-for="(item, index) in goods?.details.pictures"
           :key="item"
           mode="widthFix"
           :src="item"
+          @error="onDetailImageError(index)"
         ></image>
       </view>
     </view>
@@ -244,7 +278,12 @@ const handleSelectAddress = (address: AddressItem) => {
           hover-class="none"
           :url="`/pages/goods/goods?id=${item.id}`"
         >
-          <image class="image" mode="aspectFill" :src="item.picture"></image>
+          <image
+            class="image"
+            mode="aspectFill"
+            :src="getSimilarImage(item)"
+            @error="onSimilarImageError(item)"
+          ></image>
           <view class="name ellipsis">{{ item.name }}</view>
           <view class="price">
             <text class="symbol">¥</text>

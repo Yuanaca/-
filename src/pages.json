@@ -17,7 +17,7 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTitleText": "首页",
+				"navigationBarTitleText": "点单首页",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -31,19 +31,19 @@
 		{
 			"path": "pages/cart/cart",
 			"style": {
-				"navigationBarTitleText": "购物车"
+				"navigationBarTitleText": "购物袋"
 			}
 		},
 		{
 			"path": "pages/cart/cart2",
 			"style": {
-				"navigationBarTitleText": "购物车"
+				"navigationBarTitleText": "购物袋"
 			}
 		},
 		{
 			"path": "pages/category/category",
 			"style": {
-				"navigationBarTitleText": "分类"
+				"navigationBarTitleText": "饮品分类"
 			}
 		},
 		{
@@ -56,6 +56,12 @@
 			"path": "pages/hot/hot",
 			"style": {
 				"navigationBarTitleText": "热门推荐"
+			}
+		},
+		{
+			"path": "pages/seckill/seckill",
+			"style": {
+				"navigationBarTitleText": "秒杀专区"
 			}
 		},
 		{
@@ -74,24 +80,24 @@
 	// 设置 TabBar
 	"tabBar": {
 		"color": "#333",
-		"selectedColor": "#27ba9b",
+		"selectedColor": "#C46A3C",
 		"backgroundColor": "#fff",
 		"borderStyle": "white",
 		"list": [
 			{
-				"text": "首页",
+				"text": "点单",
 				"pagePath": "pages/index/index",
 				"iconPath": "static/tabs/home_default.png",
 				"selectedIconPath": "static/tabs/home_selected.png"
 			},
 			{
-				"text": "分类",
+				"text": "饮品",
 				"pagePath": "pages/category/category",
 				"iconPath": "static/tabs/category_default.png",
 				"selectedIconPath": "static/tabs/category_selected.png"
 			},
 			{
-				"text": "购物车",
+				"text": "购物袋",
 				"pagePath": "pages/cart/cart",
 				"iconPath": "static/tabs/cart_default.png",
 				"selectedIconPath": "static/tabs/cart_selected.png"
